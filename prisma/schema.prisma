@@ -6,11 +6,25 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+model Otp {
+  id         Int      @id @default(autoincrement())
+  email      String
+  code       String
+  expiresAt  DateTime
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Vote {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  option     String
+  createdAt  DateTime @default(now())
 }
