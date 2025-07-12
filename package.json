@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "googleapis": "^152.0.0",
     "next": "15.3.5",
     "nodemailer": "^7.0.5",
-    "prisma": "^6.11.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -20,10 +20,12 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
+    "prisma": "^6.11.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
