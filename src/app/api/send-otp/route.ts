@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
+import tryCatch from "@/utils/try-catch";
 
 const prisma = new PrismaClient();
 
@@ -27,38 +28,66 @@ export async function POST(req: Request) {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-  try {
-    const accessToken = (await oAuth2Client.getAccessToken()).token || "";
+  const { error: oAuthError, data: oAuthData } = await tryCatch(
+    oAuth2Client.getAccessToken()
+  );
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.EMAIL_USER,
-        clientId: process.env.EMAIL_CLIENT_ID,
-        clientSecret: process.env.EMAIL_CLIENT_SECRET,
-        refreshToken: process.env.EMAIL_REFRESH_TOKEN,
-        accessToken,
-      },
-    });
+  if (oAuthError) {
+    console.error("Error getting access token:", oAuthError);
+    return NextResponse.json(
+      { message: "Failed to get access token", oAuthError: String(oAuthError) },
+      { status: 500 }
+    );
+  }
+  if (!oAuthData || !oAuthData.token) {
+    return NextResponse.json(
+      { message: "Failed to get access token" },
+      { status: 500 }
+    );
+  }
 
-    await transporter.sendMail({
+  const accessToken = oAuthData.token || "";
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.EMAIL_USER,
+      clientId: process.env.EMAIL_CLIENT_ID,
+      clientSecret: process.env.EMAIL_CLIENT_SECRET,
+      refreshToken: process.env.EMAIL_REFRESH_TOKEN,
+      accessToken,
+    },
+  });
+
+  const { error: sendError } = await tryCatch(
+    transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: email,
       subject: "Your OTP Code",
       html: `<p>Your OTP is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
-    });
+    })
+  );
 
-    await prisma.otp.create({
-      data: { email, code: otp, expiresAt },
-    });
-
-    return NextResponse.json({ message: "OTP sent" });
-  } catch (err) {
-    console.error("Send OTP error:", err);
+  if (sendError) {
+    console.error("Error sending email:", sendError);
     return NextResponse.json(
-      { message: "Failed to send OTP", error: String(err) },
+      { message: "Failed to send OTP", error: String(sendError) },
       { status: 500 }
     );
   }
+
+  const { error: otpError } = await tryCatch(
+    prisma.otp.create({
+      data: { email, code: otp, expiresAt },
+    })
+  );
+  if (otpError) {
+    console.error("Error saving OTP to database:", otpError);
+    return NextResponse.json(
+      { message: "Failed to save OTP", error: String(otpError) },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ message: "OTP sent" });
 }
