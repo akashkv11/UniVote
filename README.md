@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Univote 🗳️
 
-## Getting Started
+**Univote** is a modular hybrid polling application that allows users to create, share, and vote on polls using email-based OTP authentication. It supports both anonymous and authenticated poll creation while ensuring vote integrity and user privacy.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- ✅ Create polls anonymously or with email-based claim
+- 🔐 OTP authentication via email
+- 🗳️ One vote per email (no duplicates)
+- 📊 Real-time results for poll creators
+- 🔗 Shareable poll links with unique codes
+- ❌ Spam & abuse prevention (rate-limiting, OTP resend cooldown)
+- 📈 Optional visualizations (charts/graphs for poll results)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧱 Modular Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Auth Module
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Send & verify OTP via email
+- Rate-limiting to prevent abuse
 
-## Learn More
+### 2. Poll Module
 
-To learn more about Next.js, take a look at the following resources:
+- Create polls
+- Claim polls via OTP
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Vote Module
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Vote with OTP verification
+- Prevent multiple votes
 
-## Deploy on Vercel
+### 4. Results Module
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Aggregate results
+- Secure access for creators
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 5. Poll Sharing Module
+
+- Unique poll codes
+- Shareable links
+
+### 6. Frontend UI Module
+
+- Home, Create, Vote, Results, Error Views
+
+### 7. Utils / Services Module
+
+- OTP generation
+- Code handling
+- Logging
+
+### 8. Optional: Admin Module
+
+- Manage polls
+- Ban emails or prevent spam
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Next.js, TailwindCSS
+- **Backend:** Supabase, Prisma ORM, Nodemailer
+- **Authentication:** OTP over Email
+- **Optional:** Charting Libraries (for visual results)
+
+## 🧪 Flow Summary
+
+1. User visits home page
+2. Creates a poll (can be anonymous)
+3. Shares the poll link/code
+4. Voters enter email & receive OTP
+5. After verifying OTP, they vote
+6. Creator can view poll results (if claimed)
+
+## 🌟 Status
+
+Currently in **planning and early development phase**. Looking for collaborators.
+
+## 🤝 Contributing
+
+Want to contribute? Great! I'm actively looking for:
+
+- Frontend Developers (Next.js, TailwindCSS)
+- Backend Developers (Supabase, Prisma, Node.js)
+- Full-Stack Developers
+- UI/UX Designers
+- Security/DevOps enthusiasts
+
+> Feel free to fork, star ⭐, or open an issue. Let's build this together!
+
+## 📬 Contact
+
+If you're interested, DM me on [LinkedIn](#https://www.linkedin.com/in/akash-k-v/) or drop an issue in this repo.
+
+---
+
+MIT License
