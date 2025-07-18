@@ -31,6 +31,7 @@ export default function SendOtpPage() {
         setMessage(data.message || "Failed to send OTP.");
       }
     } catch (err) {
+      console.error(err);
       setStatus("error");
       setMessage("Something went wrong.");
     }
