@@ -88,7 +88,7 @@ Want to contribute? Great! I'm actively looking for:
 
 ## 📬 Contact
 
-If you're interested, DM me on [LinkedIn](#https://www.linkedin.com/in/akash-k-v/) or drop an issue in this repo.
+If you're interested, DM me on [LinkedIn](https://www.linkedin.com/in/akash-k-v/) or drop an issue in this repo.
 
 ---
 
