@@ -31,7 +31,7 @@ export default function HomePage() {
           <p className="text-sm text-gray-500 mb-4">
             Set your question and options. Share the link with voters.
           </p>
-          <Link href="/create">
+          <Link href="/create-poll">
             <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full">
               Create Poll
             </button>
