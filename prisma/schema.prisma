@@ -13,18 +13,46 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+model Poll {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  question    String?
+  claimed   Boolean       @default(false)
+  email     String?
+  createdAt   DateTime  @default(now())
+
+  options     Option[]
+  votes       Vote[]
+}
+
+model Option {
+  id        Int     @id @default(autoincrement())
+  text      String
+  pollId    Int
+  poll      Poll    @relation(fields: [pollId], references: [id])
+  votes     Vote[]
+}
+
+model Vote {
+  id         Int      @id @default(autoincrement())
+  email      String
+  optionId   Int
+  pollId     Int
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  option     Option   @relation(fields: [optionId], references: [id])
+  poll       Poll     @relation(fields: [pollId], references: [id])
+
+  @@unique([email, pollId]) // prevent same user voting multiple times per poll
+}
+
 model Otp {
   id         Int      @id @default(autoincrement())
   email      String
   code       String
   expiresAt  DateTime
   verified   Boolean  @default(false)
-  createdAt  DateTime @default(now())
-}
-
-model Vote {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  option     String
   createdAt  DateTime @default(now())
 }
