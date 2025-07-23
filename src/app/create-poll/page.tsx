@@ -1,9 +1,22 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useRef, useState } from "react";
+import CopyToClipboard from "../components/CopyToClipboard";
 
 export default function CreatePollPage() {
-  const [question, setQuestion] = useState('');
-  const [options, setOptions] = useState(['', '']);
+  const [question, setQuestion] = useState("");
+  const [options, setOptions] = useState(["", ""]);
+  const [pollCode, setPollCode] = useState<string | null>(null);
+
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  const handleClearForm = () => {
+    setQuestion("");
+    setOptions(["", ""]);
+    setPollCode(null);
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+  };
 
   const handleOptionChange = (value: string, index: number) => {
     const updatedOptions = [...options];
@@ -12,7 +25,7 @@ export default function CreatePollPage() {
   };
 
   const addOption = () => {
-    if (options.length < 10) setOptions([...options, '']);
+    if (options.length < 10) setOptions([...options, ""]);
   };
 
   const removeOption = (index: number) => {
@@ -28,18 +41,19 @@ export default function CreatePollPage() {
 
     const payload = {
       question,
-      options: options.filter((opt) => opt.trim() !== ''),
+      options: options.filter((opt) => opt.trim() !== ""),
     };
 
-    const res = await fetch('/api/create-poll', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/create-poll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     const data = await res.json();
     if (res.ok) {
-      console.error(`Poll created! Share this code: ${data.code}`);
+      console.log("Poll created! Share this code", data.pollCode);
+      setPollCode(data.pollCode);
     } else {
       console.error(data);
     }
@@ -48,7 +62,7 @@ export default function CreatePollPage() {
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 border rounded bg-white shadow">
       <h1 className="text-2xl font-bold mb-4">Create a Poll</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" ref={formRef}>
         <div>
           <label className="block font-medium mb-1">Question (optional)</label>
           <input
@@ -92,13 +106,38 @@ export default function CreatePollPage() {
           </button>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Create Poll
-        </button>
+        <div className="flex justify-center gap-3">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            style={{ cursor: "pointer" }}
+            disabled={
+              pollCode !== null ||
+              options.length < 2 ||
+              options.some((opt) => opt.trim() === "")
+            }
+          >
+            {pollCode ? "Poll Created" : "Create Poll"}
+          </button>
+          {pollCode ? (
+            <button
+              type="reset"
+              className="bg-white text-black px-4 py-2 rounded hover:bg-black hover:text-white"
+              style={{ cursor: "pointer" }}
+              onClick={handleClearForm}
+            >
+              Create Another Poll
+            </button>
+          ) : null}
+        </div>
       </form>
+      <div className=" my-4 w-full flex justify-center">
+        {pollCode ? (
+          <CopyToClipboard text={`Your poll code: ${pollCode}`} />
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 }
