@@ -17,13 +17,15 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-    
-     const parsed = pollSchema.safeParse(body);
-    
-    if (!parsed.success) {
-      return NextResponse.json({ errors: z.flattenError(parsed.error) }, { status: 400 });
-    }
 
+  const parsed = pollSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { errors: z.flattenError(parsed.error) },
+      { status: 400 }
+    );
+  }
 
   const { question, options, email } = body;
 
@@ -33,20 +35,20 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-    const code = nanoid(6).toUpperCase(); // unique short poll code
-    
-    const pollCreationPromise = prisma.poll.create({
-      data: {
-        question: question || null,
-        code,
-        email: email || null,
-        claimed: false,
-        options: {
-          create: options.map((text: string) => ({ text })),
-        },
+  const code = nanoid(8); // unique short poll code
+
+  const pollCreationPromise = prisma.poll.create({
+    data: {
+      question: question || null,
+      code,
+      email: email || null,
+      claimed: false,
+      options: {
+        create: options.map((text: string) => ({ text })),
       },
-      include: { options: true },
-    })
+    },
+    include: { options: true },
+  });
 
   const { data: poll, error: pollError } = await tryCatch(pollCreationPromise);
 
