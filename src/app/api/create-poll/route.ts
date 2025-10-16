@@ -1,4 +1,4 @@
-import { pollSchema } from "@/lib/validation/poll.schema";
+import { pollSchema } from "@/lib/validation-schema/poll.schema";
 import tryCatch from "@/utils/try-catch";
 import { PrismaClient } from "@prisma/client";
 import { nanoid } from "nanoid";

@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
-import CopyToClipboard from "../components/CopyToClipboard";
+import CopyToClipboard from "../../components/shared/CopyToClipboard";
+import Link from "next/link";
 
 export default function CreatePollPage() {
   const [question, setQuestion] = useState("");
@@ -134,10 +135,13 @@ export default function CreatePollPage() {
       <div className=" my-4 w-full flex justify-center">
         {pollCode ? (
           <CopyToClipboard text={`Your poll code: ${pollCode}`} />
-        ) : (
-          ""
-        )}
+        ) : null}
       </div>
+      {pollCode ? (
+        <span className="flex justify-center">
+          <Link href={`/send-otp/${pollCode}`}>Claim poll</Link>
+        </span>
+      ) : null}
     </div>
   );
 }

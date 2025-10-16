@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export const pollSchema = z.object({
-  question: z.string().min(1, "Question is required").max(255).optional(),
+  question: z
+    .union([z.string().min(1, "Question is required").max(255), z.literal("")])
+    .optional()
+    .transform((e) => (e === "" ? undefined : e)),
   options: z
     .array(z.string().min(1, "Option text is required"))
     .min(2, "At least 2 options are required")
