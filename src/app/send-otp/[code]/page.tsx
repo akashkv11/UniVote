@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function SendOtpPage() {
   const [email, setEmail] = useState("");
 
-  const { setStatus, loading, success } = useStatusStore();
+  const { setStatus, loading } = useStatusStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
